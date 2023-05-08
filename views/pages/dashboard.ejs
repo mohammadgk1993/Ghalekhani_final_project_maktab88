@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <title><%= user.firstName %>'s profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <div class="profile">
+        <div class="profile-photo">
+
+          <img src="<%= user.avatar %>" alt="Profile Photo">
+
+          <button id="edit-photo-icon">
+            <i class="fas fa-pencil-alt" title="Edit profile photo"></i>
+          </button>
+
+          <form id="myForm" action="/user/uploadAvatar" enctype="multipart/form-data" method="post">
+            <input type="file" name="avatar" id="fileToUpload">
+          </form>
+
+        </div>
+        <h2 id="profile-name"><%= user.username %></h2>
+
+        <button id="show-user-info">Account Info</button>
+        <button id="show-modal-btn">Update Info</button>
+        <button id="show-user-delete">Delete Account</button>
+
+        <div class="modal-3" id="myModal-info">
+          <div class="modal-content-3">
+            <span class="close-3">&times;</span>
+            <p id="firstName">First Name: <%= user.firstName %></p>
+            <p id="lastName">Last Name: <%= user.lastName %></p>
+            <p id="username">UserName: <%= user.username %></p>
+            <p id="gender">Gender: <%= user.gender %></p>
+            <p id="phoneNumber">Phone Number: <%= user.phoneNumber %></p>
+          </div>
+        </div>
+
+        <div class="modal-2" id="myModal-delete">
+          <div class="modal-content-2">
+            <span class="close-2">&times;</span>
+            <p>Are you sure?</p>
+            <form id="delete-user">
+              <button type="submit">Yes</button>
+            </form>
+            <button class="close-2">No</button>
+          </div>
+        </div>
+
+        <div class="modal" id="myModal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+
+            <form id="update-user">
+              <label for="update-user-firstName">First Name</label>
+              <input type="text" id="update-user-firstName">
+              <label for="update-user-lastName">Last Name</label>
+              <input type="text" id="update-user-lastName">
+              <label for="update-user-password">Password</label>
+              <input type="password" id="update-user-password">
+              <label for="update-user-gender">Gender</label>
+              <select id="update-user-gender" value="not-set" selected>
+                  <option value="male">male</option>
+                  <option value="female">female</option>
+                  <option value="not-set">not-set</option>
+              </select>
+              <label for="update-user-phoneNumber">Phone Number</label>
+              <input type="text" id="update-user-phoneNumber">
+              <button type="submit">Update User</button>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <form action="/user/logout" method="get" id="logout">
+        <button type="submit">Log Out</button>
+      </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/javascripts/main.js"></script>
+  </body>
+</html>
