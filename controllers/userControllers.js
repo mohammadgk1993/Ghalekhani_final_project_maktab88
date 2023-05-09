@@ -19,7 +19,8 @@ const registerUser = async (req, res, next) => {
         lastName: req.body.lastName,
         username: req.body.username,
         password: req.body.password,
-        phoneNumber: req.body.phoneNumber
+        phoneNumber: req.body.phoneNumber,
+        avatar: "/images/userAvatars/icon.png"
     });
 
     try {
