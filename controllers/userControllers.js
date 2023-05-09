@@ -102,7 +102,9 @@ const uploadAvatar = (req, res, next) => {
         
         try {
             // delete old avatar
-            if (req.session.user.avatar) await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
+            if (req.session.user.avatar != "/images/userAvatars/icon.png") {
+                await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
+            }
 
             const user = await User.findByIdAndUpdate(req.session.user._id, {
                 avatar: "/images/userAvatars/" + req.file.filename
@@ -171,15 +173,18 @@ const updateUser = (req, res, next) => {
 }
 
 
-const deleteUser = (req, res, next) => {
-    console.log(req.session.user.username)
-    User.deleteOne({username:req.session.user.username})
-    .then(data => {
+const deleteUser = async (req, res, next) => {
+    try {
+        await User.deleteOne({username:req.session.user.username})
+        if (req.session.user.avatar != "/images/userAvatars/icon.png") {
+            await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
+        }
         req.session.destroy();
         console.log("ok")
         res.json(data)
-    })
-    .catch(err => next(createError(500, err.message)));
+    } catch (err) {
+        next(createError(500, err.message))
+    }
 }
 
 
