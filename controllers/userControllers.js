@@ -157,12 +157,14 @@ const updateUser = (req, res, next) => {
     console.log(req.body)
     User.findByIdAndUpdate(id,updatedUser)
     .then(data => {
-        console.log(data)
         req.session.user = {...req.session.user,...updatedUser}
+        req.session.reload(function(err) {
+            if (err) {
+                console.log(err)
+            }
+        });
         console.log(req.session.user)
         const {firstName,lastName,username,password,gender,phoneNumber} = req.session.user
-        // res.json(data)
-        console.log({firstName,lastName,username,password,gender,phoneNumber})
         res.json({firstName,lastName,username,password,gender,phoneNumber})
     })
     .catch(err => next(createError(500, err.message)));

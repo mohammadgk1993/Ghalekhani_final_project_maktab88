@@ -21,6 +21,8 @@ $(() => {
         .then(res => {
             res.json()
             $("#myModal").css("display","none")
+            console.log(updatedUser)
+            location.reload()
         })
     });
 
