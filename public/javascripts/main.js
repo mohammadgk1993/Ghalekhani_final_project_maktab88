@@ -18,7 +18,10 @@ $(() => {
           },
           body: JSON.stringify(updatedUser)
         })
-        .then(res => res.json())
+        .then(res => {
+            res.json()
+            $("#myModal").css("display","none")
+        })
     });
 
     $("#delete-user").on("submit",function (e) { 

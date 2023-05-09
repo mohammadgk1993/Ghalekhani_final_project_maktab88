@@ -38,6 +38,7 @@ const userAvatarUpload = multer({
     }
 });
 
+
 const galleryUpload = multer({ 
     storage: galleryStorage,
     fileFilter: (req, file, cb) => {
