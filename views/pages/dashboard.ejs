@@ -65,10 +65,11 @@
               <label for="update-user-password">Password</label>
               <input type="password" id="update-user-password">
               <label for="update-user-gender">Gender</label>
-              <select id="update-user-gender" value="not-set" selected>
-                  <option value="male">male</option>
-                  <option value="female">female</option>
-                  <option value="not-set">not-set</option>
+              <select id="update-user-gender">
+                <option value="<%= user.gender %>" hidden selected><%= user.gender %></option>
+                <option value="not-set">not-set</option>
+                <option value="male">male</option>
+                <option value="female">female</option>
               </select>
               <label for="update-user-phoneNumber">Phone Number</label>
               <input type="text" id="update-user-phoneNumber">
