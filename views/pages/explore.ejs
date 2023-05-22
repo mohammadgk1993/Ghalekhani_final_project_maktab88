@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/stylesheets/post.css">
+        <title>Explore</title>
+    </head>
+    <body>
+        <!-- partial:index.partial.html -->
+        <div class="container">
+            <% for (let article of articles) { %>
+            <div class="card" id="<%= article._id %>">
+                <div class="card__header">
+                    <img src="<%= article.thumbnail %>" alt="card__image" class="card__image" width="600">
+                </div>
+                <div class="card__body">
+                    <h4><%= article.title %></h4>
+                    <p><%= article.description %></p>
+                    <form action="/article/<%= article._id %>" method="get">
+                        <input id="read-more" type="submit" value="read more">
+                    </form>
+                </div>
+                <div class="card__footer">
+                    <div class="user">
+                        <!-- <img src="https://i.pravatar.cc/40?img=1" alt="user__image" class="user__image"> -->
+                        <div class="user__info">
+                            <small><%= article.createdAt %></small>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+            <% } %>
+        </div>
+
+        <div>
+            <% let amount = JSON.parse(JSON.stringify(articles)).length %>
+            <% let buttons = Math.floor((amount%6)/6) + Math.ceil(amount/6) %>
+            <% for (let i = 0; i < buttons; i++) { %>
+                <button><%= i + 1%></button>
+            <% } %>
+        </div>
+    </body>
+</html>

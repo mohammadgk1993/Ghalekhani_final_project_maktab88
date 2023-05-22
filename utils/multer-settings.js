@@ -27,6 +27,31 @@ const userAvatarUpload = multer({
     }
  });
 
+ const thumbnailStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/images/articleAvatars');
+    },
+    filename: function (req, file, cb) {
+        if (file.originalname === "grant.png") cb(new Error("Bad file name!"), null);
+        cb(null, Date.now() + "-" + file.originalname)
+    }
+});
+
+ const thumbnailAvatarUpload = multer({ 
+    storage: avaterStorage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+          cb(null, true);
+        } else {
+          return cb(new Error('Only .png, .jpg and .jpeg format allowed!'), false);
+        }
+    },
+    limits: {
+        files: 10,
+        fileSize: 1 * 1024 * 1024
+    }
+ });
+
 
  const galleryStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -57,5 +82,6 @@ const galleryUpload = multer({
 
  module.exports = {
     userAvatarUpload,
-    galleryUpload
+    galleryUpload,
+    thumbnailAvatarUpload
  }

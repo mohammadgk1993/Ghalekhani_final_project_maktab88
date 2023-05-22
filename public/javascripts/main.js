@@ -77,4 +77,57 @@ $(() => {
     $(".close-3").eq(0).on("click", () => {
         $("#myModal-info").css("display","none")
     })
+
+    $("#my-articles-btn").on("click", function() {
+        $("iframe").attr("src", `http://localhost:3000/article/all?username=${$("body").attr("id")}`)
+        $(this).css("background-color","#2F80ED")
+        $(this).css("color","white")
+        $("#explore-btn").css("background-color","#dedede")
+        $("#explore-btn").css("color","#2F80ED")
+    })
+
+    $("#explore-btn").on("click", function() {
+        $("iframe").attr("src", `http://localhost:3000/article/all`)
+        $(this).css("background-color","#2F80ED")
+        $(this).css("color","white")
+        $("#my-articles-btn").css("background-color","#dedede")
+        $("#my-articles-btn").css("color","#2F80ED")
+    })
+
+    $("#update-article").on("click", function() {
+        const updatedArticle = {}
+        
+        if (!!$("#update-article-thumbnail").val()) updatedArticle.thumbnail = $("#update-article-thumbnail").val()
+        if (!!$("#update-article-title").val()) updatedArticle.title = $("#update-article-title").val()
+        if (!!$("#update-article-description").val()) updatedArticle.description = $("#update-article-description").val()
+        if (!!$("#update-article-content-image").val()) updatedArticle.contentImages = $("#update-article-content-image").val()
+        if (!!$("#update-article-content").val()) updatedArticle.content = $("#update-article-content").val()
+
+        fetch(`/article/${$(".container").children().eq(0).attr("id")}`,
+        {method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedArticle)
+        })
+        .then(res => res.json)
+        .then(data => {
+            console.log(data)
+            document.location = `/article/${$(".container").children().eq(0).attr("id")}`
+        })
+    })
+
+    $("#show-delete-article").on("click", function() {
+        console.log($(".container").children().eq(0).attr("id"))
+        fetch(`/article/${$(".container").children().eq(0).attr("id")}`,
+        {method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(res => {
+            res.json()
+            document.location.pathname = "/article/all"
+        })
+    })
 })

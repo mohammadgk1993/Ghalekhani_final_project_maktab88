@@ -30,10 +30,10 @@ router.get("/logout", isLogin, logout);
 
 router.post("/uploadAvatar", isLogin, uploadAvatar)
 
-router.post("/bulkUpload", bulkUpload)
+router.post("/bulkUpload", isLogin,bulkUpload)
 
-router.patch("/", updateUser)
+router.patch("/", isLogin, updateUser)
 
-router.delete("/", deleteUser)
+router.delete("/", isLogin, deleteUser)
 
 module.exports = router;

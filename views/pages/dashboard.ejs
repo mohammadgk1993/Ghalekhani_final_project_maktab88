@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
   </head>
 
-  <body>
+  <body id="<%= user.username %>">
     <div class="sidebar">
       <div class="profile">
         <div class="profile-photo">
@@ -85,6 +85,16 @@
       <form action="/user/logout" method="get" id="logout">
         <button type="submit">Log Out</button>
       </form>
+    </div>
+
+    <div id="article-container">
+      <div id="article-menu">
+        <button id="explore-btn">Explore</button>
+        <button id="my-articles-btn">My Articles</button>
+      </div>
+      <div id="articles">
+        <iframe src="http://localhost:3000/article/all"></iframe>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

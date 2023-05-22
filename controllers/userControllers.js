@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 
 const getRegisterPage = (req, res, next) => {
     if (req.session.user) return res.redirect("/user/dashboard");
-    res.render("pages/register", {errorMessage: req.query.errorMessage? req.query.errorMessage : null});
+    res.render("pages/log&sign", {errorMessage: req.query.errorMessage? req.query.errorMessage : null});
 };
 
 
@@ -48,7 +48,7 @@ const getLoginPage = (req, res, next) => {
     // if (req.query.errorMessage) errorMessage = req.query.errorMessage;
     const { errorMessage = null } = req.query;
 
-    res.render("pages/login", {errorMessage});
+    res.render("pages/log&sign", {errorMessage});
 };
 
 

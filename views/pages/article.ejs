@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>article</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/stylesheets/post.css">
+    </head>
+    <body>
+        <div>
+            <button id="show-modal-btn">Edit article</button>
+            <button id="show-delete-article">delete article</button>
+        </div>
+
+        <div id="crud-modals">
+            <div class="modal" id="myModal">
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <div>
+                    <label for="">Article Thumbnail</label>
+                    <input type="file" id="update-article-thumbnail">
+                    <label for="">Article Title</label>
+                    <input type="text" id="update-article-title">
+                    <label for="">Article Description</label>
+                    <input type="text" id="update-article-description"> 
+                    <label for="">Article Content Image</label>
+                    <input type="file" id="update-article-content-image"> 
+                    <label for="">Article Content</label>
+                    <input type="text" id="update-article-content"> 
+                    <button id="update-article">Update User</button>
+                  </div>
+                </div>
+              </div>
+        </div>
+        
+        <div class="container single-container">
+            <div class="card single-card" id="<%= article._id %>">
+                <div class="card__header">
+                    <img src="<%= article.thumbnail %>" alt="card__image" class="card__image" width="600">
+                </div>
+                <div class="card__body">
+                    <h4>Title: <%= article.title %></h4>
+                    <p><%= article.content %></p>
+                </div>
+                <div class="card__footer">
+                    <div class="user">
+                        <div class="user__info">
+                            <p>Author: <%= article.author %></p>
+                            <small>Created At: <%= article.createdAt %></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/javascripts/main.js"></script>
+    </body>
+</html>

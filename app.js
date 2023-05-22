@@ -9,9 +9,10 @@ const session = require("express-session");
 
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
+const articleRouter = require('./routes/articleRouter')
 
 const app = express();
-mongoose.connect('mongodb://127.0.0.1:27017/Blog88').then(() => {
+mongoose.connect('mongodb://127.0.0.1:27017/blog-project').then(() => {
   console.log("DB is connected..");
 });
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRouter);
 app.use('/admin', adminRouter);
+app.use('/article', articleRouter)
 
 
 // catch 404 and forward to error handler

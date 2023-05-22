@@ -1,5 +1,8 @@
+/* @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800'); */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+
 * {
-  font-family:monospace;
+  font-family:'Quicksand';
   color:rgba(9,9,121,1);
 }
 
@@ -9,6 +12,22 @@
 
 body {
   background-color: rgb(229, 229, 229);
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+#articles {
+  width: 100%;
+  height: 100vh;
+}
+
+iframe {
+  width: 100%;
+  height: 100vh;
+  border: none;
 }
 
 input {
@@ -24,8 +43,9 @@ i:hover {
 
 button {
   /* background-color: yellow; */
-  background: rgb(255,177,0) !important;
-  background: linear-gradient(90deg, rgba(255,177,0,1) 0%, rgba(251,255,0,1) 100%) !important; 
+  /* background: rgb(255,177,0) !important;
+  background: linear-gradient(90deg, rgba(255,177,0,1) 0%, rgba(251,255,0,1) 100%) !important;  */
+  background-color: white;
   border: none;
   border-radius: 20px;
   padding: 3.5% !important;
@@ -33,24 +53,21 @@ button {
   margin: 1%;
 }
 
-button:hover {
+/* button:hover {
   background: white !important;
   transform: scale(1.05)
-}
+} */
 
 .sidebar {
   height: 100%;
-  width: 200px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  /* background-color: #4a4a4a; */
-  background: rgb(2,0,36);
-  background: linear-gradient(45deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%); 
+  width: 20%;
+  /* background-color:  #7ad7ff; */
+  background: -webkit-linear-gradient(to right, #2baaff, #49f6ff);
+	background: linear-gradient(to right, #88f7ff, #33e6fe);
   color: white;
-  overflow-x: hidden;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   flex-direction: column;
 }
   
@@ -68,7 +85,7 @@ button:hover {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  border: yellow solid 2px;
+  border: white solid 2px;
   object-fit: cover;
 }
 
@@ -103,6 +120,8 @@ button:hover {
   padding: 0; /* remove padding */
   cursor: pointer; /* show pointer on hover */
   z-index: 1; /* set the z-index to be on top of the image */
+  background-color: white;
+  border-radius: 50%;
 }
 
 #logout {
@@ -113,6 +132,7 @@ button:hover {
 
 #logout * {
   width: 100%;
+  font-weight:600;
 }
 
 #logout button {
@@ -213,4 +233,39 @@ select {
   border: none;
   border-radius: 20px;
   font-size: 18px;
+}
+
+#show-modal-btn,#show-user-delete,#show-user-info,#logout {
+  width: 80%;
+  padding: 3% !important;
+  font-weight:600;
+}
+
+#article-container {
+  width: 100%;
+  height: 100vh;
+}
+
+#article-menu {
+  background-color:  rgb(241, 252, 255);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 0.5%;
+}
+
+#article-menu * {
+  font-weight: 600;
+  padding: 1% !important;
+  margin: 0.5%;
+}
+
+#my-articles-btn {
+  background-color: #dedede;
+  color: #2F80ED;
+}
+
+#explore-btn {
+  background-color: #2F80ED;
+  color: white;
 }
