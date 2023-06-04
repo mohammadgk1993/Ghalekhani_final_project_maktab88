@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
+const createError = require('http-errors')
 
 
 const UserSchema = new mongoose.Schema({
@@ -92,19 +93,22 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
 (async (next) => {
     try {
         const User = mongoose.model('User',UserSchema);
-        const count = await User.countDocuments({});
-        if (count === 0) {
-        const admin = new User({
-            firstName: 'admin',
-            lastName: 'admin',
-            username: 'admin',
-            password: 'admin123',
-            gender: 'male',
-            phoneNumber: '+989110000000',
-            role: 'admin',
-        });
-        await admin.save();
-        console.log('Default admin user created.');
+        // const adminUser = await User.countDocuments({});
+        const adminUser = await User.findOne({role:'admin'})
+        // console.log(adminUser)
+        if (!adminUser) {
+            const admin = new User({
+                firstName: 'admin',
+                lastName: 'admin',
+                username: 'admin',
+                password: 'admin123',
+                gender: 'male',
+                avatar: "/images/userAvatars/icon.png",
+                phoneNumber: '+989110000000',
+                role: 'admin',
+            });
+            await admin.save();
+            console.log('Default admin user created.');
         } else {
         console.log('Admin user already exists.');
         }

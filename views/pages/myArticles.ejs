@@ -1,25 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/stylesheets/article.css">
-        <title>Explore</title>
-    </head>
-    <body>
-        <% for (let article of JSON.parse(JSON.stringify(articles))) { %>
-            <div id="<%= article._id %>">
-                <h3><%= article.title %></h3>
-                <img src="<%= article.thumbnail%>">
-                <p><%= article.description %></p>
-                <button>read more</button>
-                <p>created at: <%= article.createdAt %></p>
-            </div>
-        <% } %>
-    </body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en" >
     <head>
@@ -58,11 +36,15 @@
         </div>
         
         <div>
-            <% let amount = JSON.parse(JSON.stringify(articles)).length %>
+            <!-- <% let amount = JSON.parse(JSON.stringify(articles)).length %>
             <% let buttons = Math.floor((amount%6)/6) + Math.ceil(amount/6) %>
             <% for (let i = 0; i < buttons; i++) { %>
                 <button><%= i + 1%></button>
-            <% } %>
+            <% } %> -->
+
+            <% for (let i = 1 ; i <= total ; i++) { %>
+                <button class="pagination"><%= i %></button>
+              <% } %>
         </div>
     </body>
 </html>

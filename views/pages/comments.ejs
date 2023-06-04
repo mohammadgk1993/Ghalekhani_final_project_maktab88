@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>article</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/stylesheets/comment.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div id="comment-container">
+            <% const articleComments = JSON.parse(JSON.stringify(comments)) %>
+            <% for (let comment of articleComments) { %>
+                <div id="comment">
+                    <div id="profile-info">
+                        <img src="<%= comment.author.avatar %>" alt="">
+                        <h4><%= comment.author.username %>:</h4>
+                    </div>
+                    <input value="<%= comment.content %>" readonly="true">
+                    <p><small><%= comment.createdAt %></small></p>
+                    <div id="comment-crud">
+                        <% if (role == 'admin') { %>
+                            <button class="delete-btn trash" id="<%= comment._id %>" title="Delete Comment"><i class="fa fa-trash-o"></i></button>
+                        <% } else if (comment.author._id == id) { %>
+                            <button class="btn trash" id="<%= comment._id %>" title="Delete Comment"><i class="fa fa-trash-o"></i></button>
+                            <div id="edit-choice">
+                                <button title="edit comment" class="btn edit" id="<%= comment._id %>"><i class="fa fa-pencil"></i></button>
+                                <button title="accept edit" class="accept" id="<%= comment._id %>"><i class="fa fa-check"></i></button>
+                                <button title="cancel comment" class="cancel"><i class="fa fa-remove"></i></button>
+                            </div>
+                            <p id="error"></p>
+                        <% } %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/javascripts/comment.js"></script>
+    </body>
+</html>

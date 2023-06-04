@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-
+const { roleAc } = require('../middlewares/ac/ac')
+const { isLogin } = require('../middlewares/auth/auth');
 const {
+    getAdminPanel,
     getRegisterPage,
     registerUser,
     getLoginPage,
@@ -13,27 +15,24 @@ const {
     updateUser,
     deleteUser
 } = require("../controllers/userControllers");
-
-const { isLogin } = require('../middlewares/auth/auth');
-
+const { loginValidator, registerValidator, accessValidator } = require('../middlewares/userMiddleware');
 
 
-router.get("/register", getRegisterPage);
-router.post("/register", registerUser)
+router.post("/register", 
+// registerValidator, 
+registerUser)
 
-router.get("/login", getLoginPage);
-router.post("/login", loginUser);
-
-router.get("/dashboard", getDashboardPage);
+router.post("/login", loginValidator, loginUser);
 
 router.get("/logout", isLogin, logout);
 
 router.post("/uploadAvatar", isLogin, uploadAvatar)
 
-router.post("/bulkUpload", isLogin,bulkUpload)
+// router.post("/bulkUpload", isLogin, bulkUpload)
 
 router.patch("/", isLogin, updateUser)
 
-router.delete("/", isLogin, deleteUser)
+router.delete("/:id", isLogin, accessValidator, deleteUser)
+
 
 module.exports = router;

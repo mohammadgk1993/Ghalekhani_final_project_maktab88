@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/create-article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+  </head>
+
+  <body>
+    <form method="post" action="http://localhost:3000/article" enctype="multipart/form-data">
+      <label class="btn">Thumbnail
+        <input type="file" name="thumbnail" class="file">
+      </label>
+      <br>
+      <label>Title:</label>
+      <input type="text" name="title">
+      <br>
+      <label>Content:</label>
+      <input type="text" name="content">
+      <label class="btn">Content Images
+        <input type="file" name="contentImages" class="file">
+      </label>
+      <br>
+      <button type="submit" id="create-btn">Create Article</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/javascripts/main.js"></script>
+  </body>
+</html>

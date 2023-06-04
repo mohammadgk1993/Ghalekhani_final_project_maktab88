@@ -113,6 +113,16 @@ background: linear-gradient(to bottom, #ef473a, #cb2d3e);
   font-size: larger;
 }
 
+.pagination {
+  color: white;
+  background-color: #2F80ED;
+  height: 40px;
+  width: 40px;
+  border: none;
+  border-radius: 25px;
+  font-size: larger;
+}
+
 .single-card {
   width: 100% !important;
   margin: 0 !important;
@@ -180,4 +190,9 @@ background: linear-gradient(to bottom, #ef473a, #cb2d3e);
   width: 30%;
   border-radius: 20px;
   font-size: 18px;
+}
+
+form {
+  width: 80%;
+  height: auto;
 }

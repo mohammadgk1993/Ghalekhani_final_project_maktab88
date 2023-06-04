@@ -1,0 +1,90 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+
+* {
+    font-family:'Quicksand';
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* #comment-container {
+    padding: 1%;
+} */
+
+body {
+    background-color: rgb(43, 149, 255);
+}
+
+#comment {
+    border: 1px solid rgb(194, 248, 255);
+    border-radius: 25px;
+    padding: 1%;
+    margin: 1%;
+    background-color: white;
+}
+
+#comment * {
+    margin: 0.5%;
+}
+
+#profile-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#profile-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.trash {
+    color: red;
+    font-size: 20px;
+    border: none;
+    background-color: inherit;
+}
+
+.edit {
+    color: rgb(4, 11, 45);
+    font-size: 20px;
+    border: none;
+    background-color: inherit;
+}
+
+.accept, .cancel {
+    display: none
+}
+
+input {
+    border: none;
+    border-radius: 10px;
+    padding: 2%;
+}
+
+#error {
+    display: none;
+    color: red;
+}
+
+#comment-crud, #edit-choice {
+    display: flex;
+    flex-direction: row;
+}
+
+#edit-choice * {
+    font-size: 20px;
+    border: none;
+    background-color: inherit;
+    margin: 7%;
+}
+
+.accept {
+    color: green;
+}
+
+.cancel {
+    color: red;
+}

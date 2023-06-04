@@ -3,49 +3,78 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs/promises');
 const Article = require("../models/Article");
-const { userAvatarUpload } = require("../utils/multer-settings")
+const User = require('../models/User');
+const { thumbnailAvatarUpload } = require('../utils/multer-settings');
 
+
+const createArticlePage = async (req,res,next) => {
+    try {
+        res.render('pages/create-article') 
+    } catch (error) {
+        return next(createError(500, error.message))
+    }
+}
 
 const getAllArticles = async (req,res,next) => {
     try {
-        if (!!req.query.username) {
-            const articles = await Article.find({author:req.query.username},{__v:0,updatedAt:0})
+        let page = 1
+        let limit = 6
+        if (!!req.query.page && req.query.page > 0) {
+            page = req.query.page
+        }
+        
+        if (!!req.query.limit && req.query.limit > 0) {
+            limit = req.query.limit
+        }
+
+        const skip = (page - 1) * limit
+
+        if (!!req.query.user) {
+            const articles = await Article.find({author:req.query.user},{__v:0,updatedAt:0})
+            .skip(skip).limit(limit)
+            .populate('author', {username:1})
+            const totalPages = Math.ceil(articles.length / limit)
             // res.json(articles).status(200)
-            res.render('pages/myArticles', {articles: articles}) 
+            res.render('pages/myArticles', {articles: articles, total: totalPages}) 
         } else {
             const articles = await Article.find({},{__v:0,updatedAt:0})
+            const totalPages = Math.ceil(articles.length / limit)
             // return res.json(articles).status(200)
-            res.render('pages/explore', {articles: articles})
+            res.render('pages/explore', {articles: articles, total: totalPages})
         }
     } catch (error) {
         return next(createError(500, error.message))
     }
 }
 
-
 const createArticle = async (req,res,next) => {
     try {
         const newArticle = new Article({})
 
         newArticle.title = req.body.title
-        newArticle.thumbnail = req.body.thumbnail
+        newArticle.thumbnail = req.files.thumbnail[0].path.slice(6)
         newArticle.content = req.body.content
+        newArticle.contentImages = 
+        req.files.contentImages.map(val => val.path.slice(6))
+        // newArticle.author = req.session.user
         newArticle.author = req.body.author
-        
-        if (!!req.body.description) newArticle.description
-        if (!!req.body.contentImages) newArticle.contentImages
 
         await newArticle.save()
-        return res.json(newArticle).status(201)
+        res.json(newArticle).status(201)
+        // res.redirect("pages/explore")
+
     } catch (error) {
         return next(createError(500, error.message))
     }
 }
 
-
 const readArticle = async (req,res,next) => {
     try {
-        const article = await Article.findById(req.params.id)
+        if (!req.session) {
+            next(createError(403, 'permission denied'))
+        }
+        // const article = await Article.findById(req.params.id)
+        const article = await Article.findOne({_id: req.params.id})
         // return res.json(article).status(200)
         res.render("pages/article", {article:article})
     } catch (error) {
@@ -53,29 +82,48 @@ const readArticle = async (req,res,next) => {
     }
 }
 
-
 const updateArticle = async (req,res,next) => {
     try {
+        console.log(req.files.contentImages)
         const updatedArticle = {}
+        let article = await Article.findById(req.params.id)
 
         if (!!req.body.title) updatedArticle.title = req.body.title
-        if (!!req.body.description) updatedArticle.description = req.body.description
-        if (!!req.body.thumbnail) updatedArticle.thumbnail = req.body.thumbnail
-        if (!!req.body.contentImages) updatedArticle.contentImages = req.body.contentImages
-        if (!!req.body.content) updatedArticle.content = req.body.content
+        if (!!req.body.content) updatedArticle.content = req.body.title
+        if (!!req.files.thumbnail[0]) {
+            await fs.unlink(path.join(__dirname, "../public", article.thumbnail))
+            updatedArticle.thumbnail = "/images/articleAvatars/" + req.files.thumbnail[0].filename
+        }
 
-        const article = await Article.findByIdAndUpdate(req.params.id, updatedArticle)
+        if(!!req.files.contentImages && req.files.contentImages.length > 0) {
+            console.log(req.files.contentImages)
+            for (let image of article.contentImages) {
+                await fs.unlink(path.join(__dirname, "../public", image))
+            }
+
+            updatedArticle.contentImages = req.files.contentImages.map(val => val.path.slice(6))
+        }
+
+        article = await Article.findByIdAndUpdate(req.params.id, updatedArticle)
         return res.json(article).status(200)
     } catch (error) {
-        return next(createError(500, "Server Error!"))
+        console.log(error)
+        return next(createError(500, error.message))
     }
 }
 
 const deleteArticle = async (req,res,next) => {
     try {
         const article = await Article.findByIdAndDelete(req.params.id)
+        await fs.unlink(path.join(__dirname, "../public", article.thumbnail))
+        if (!!article.contentImages) {
+            for (let image of article.contentImages) {
+                await fs.unlink(path.join(__dirname, "../public", image))
+            }
+        }
         return res.json(article).status(200)
     } catch (error) {
+        console.log(error)
         return next(createError(500, "Server Error!"))
     }
 }
@@ -87,134 +135,6 @@ module.exports = {
     createArticle,
     readArticle,
     updateArticle,
-    deleteArticle
+    deleteArticle,
+    createArticlePage
 };
-
-
-// const registerUser = async (req, res, next) => {
-//     const newUser = new User({
-//         firstName: req.body.firstName,
-//         lastName: req.body.lastName,
-//         username: req.body.username,
-//         password: req.body.password,
-//         phoneNumber: req.body.phoneNumber,
-//         avatar: "/images/userAvatars/icon.png"
-//     });
-
-//     try {
-//         await newUser.save();
-
-//         // res.render("pages/login");
-//         res.redirect("/user/login");
-//     } catch (err) {
-//         // res.render("pages/register", {errorMessage: "Server Error!"});
-//         res.redirect(url.format({
-//             pathname:"/user/register",
-//             query: {
-//                "errorMessage": "Server Error!"
-//              }
-//           }))
-//         //   res.redirect(`/user/register?errorMessage=Server Error`);
-//     };
-// };
-
-
-// const uploadAvatar = (req, res, next) => {
-//     const uploadUserAvatar = userAvatarUpload.single("avatar");
-
-//     uploadUserAvatar(req, res, async (err) => {
-//         if (err) {
-//             //delete if save with error
-//             // if (req.file) await fs.unlink(path.join(__dirname, "../public", req.file.filename))
-//             if (err.message) return res.status(400).send(err.message);
-//             return res.status(500).send("server error!");
-//         };
-
-//         if (!req.file) return res.status(400).send("File not send!");
-        
-//         try {
-//             // delete old avatar
-//             if (req.session.user.avatar != "/images/userAvatars/icon.png") {
-//                 await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
-//             }
-
-//             const user = await User.findByIdAndUpdate(req.session.user._id, {
-//                 avatar: "/images/userAvatars/" + req.file.filename
-//             }, {new: true});
-            
-//             req.session.user.avatar = user.avatar;
-            
-//             // return res.json(user);
-//             res.redirect("/user/dashboard");
-//         } catch (err) {
-//             return next(createError(500, "Server Error!"))
-//         };
-//     });
-// };
-
-
-// const bulkUpload = (req, res, next) => {
-//     const uploadUserAvatar = userAvatarUpload.array("gallery");
-
-//     uploadUserAvatar(req, res, async (err) => {
-//         if (err) {
-//             if (err.message) return res.status(400).send(err.message);
-//             return res.status(500).send("server error!");
-//         };
-
-//         console.log(req.file);
-//         console.log(req.files);
-
-//         res.json({
-//             file: req.file,
-//             files: req.files
-//         });
-//     });
-// };
-
-// const updateUser = (req, res, next) => {
-//     let updatedUser = {}
-//     const id = req.session.user._id
-//     console.log(id)
-
-//     if (!!req.body.firstName) updatedUser.firstName = req.body.firstName
-//     if (!!req.body.lastName) updatedUser.lastName = req.body.lastName
-//     if (!!req.body.password) updatedUser.password = req.body.password
-//     if (!!req.body.gender) updatedUser.gender = req.body.gender
-//     if (!!req.body.role) updatedUser.phoneNumber = req.body.phoneNumber
-
-//     const salt = bcrypt.genSalt(10);
-//     if (!!updatedUser.password) {
-//         updatedUser.password =  bcrypt.hash(updatedUser.password, salt);
-//     }
-
-//     console.log(req.body)
-//     User.findByIdAndUpdate(id,updatedUser)
-//     .then(data => {
-//         req.session.user = {...req.session.user,...updatedUser}
-//         req.session.reload(function(err) {
-//             if (err) {
-//                 console.log(err)
-//             }
-//         });
-//         console.log(req.session.user)
-//         const {firstName,lastName,username,password,gender,phoneNumber} = req.session.user
-//         res.json({firstName,lastName,username,password,gender,phoneNumber})
-//     })
-//     .catch(err => next(createError(500, err.message)));
-// }
-
-
-// const deleteUser = async (req, res, next) => {
-//     try {
-//         await User.deleteOne({username:req.session.user.username})
-//         if (req.session.user.avatar != "/images/userAvatars/icon.png") {
-//             await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
-//         }
-//         req.session.destroy();
-//         console.log("ok")
-//         res.json(data)
-//     } catch (err) {
-//         next(createError(500, err.message))
-//     }
-// }

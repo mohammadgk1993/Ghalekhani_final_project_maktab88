@@ -50,36 +50,48 @@ $(() => {
         $("#myForm").trigger("submit")
     })
 
-    $("#show-modal-btn").on("click", () => {
-        $("#myModal").css("display","block")
-    })
-    
-    $(".close").eq(0).on("click", () => {
-        $("#myModal").css("display","none")
+    $("#show-user-setting").on("click", function() {
+        $("#myModal-setting").css("display","flex")
     })
 
-    $("#show-user-delete").on("click", () => {
-        $("#myModal-delete").css("display","block")
+    $(".close-setting").on("click", function() {
+        $("#myModal-setting").css("display","none")
     })
 
-    $(".close-2").eq(0).on("click", () => {
-        $("#myModal-delete").css("display","none")
+    $("#show-user-info").on("click", function() {
+        $("#myModal-info").css("display","flex")
     })
 
-    $(".close-2").eq(1).on("click", () => {
-        $("#myModal-delete").css("display","none")
-    })
-
-    $("#show-user-info").on("click", () => {
-        $("#myModal-info").css("display","block")
-    })
-
-    $(".close-3").eq(0).on("click", () => {
+    $(".close-info").on("click", function() {
         $("#myModal-info").css("display","none")
     })
 
+    $("#show-user-update").on("click", function() {
+        $("#myModal-update").css("display","flex")
+    })
+
+    $(".close-update").on("click", function() {
+        $("#myModal-update").css("display","none")
+    })
+
+    $("#show-user-delete").on("click", function() {
+        $("#myModal-delete").css("display","flex")
+    })
+
+    $(".close-delete").on("click", function() {
+        $("#myModal-delete").css("display","none")
+    })
+
+    $("#create-article").on("click", function() {
+        $("iframe").attr("src", `http://localhost:3000/view/create-article`)
+    })
+
+    // $(".close-article").on("click", function() {
+    //     $("#myModal-article").css("display","none")
+    // })
+
     $("#my-articles-btn").on("click", function() {
-        $("iframe").attr("src", `http://localhost:3000/article/all?username=${$("body").attr("id")}`)
+        $("iframe").attr("src", `http://localhost:3000/article/all?user=${$("body").attr("id")}`)
         $(this).css("background-color","#2F80ED")
         $(this).css("color","white")
         $("#explore-btn").css("background-color","#dedede")
@@ -129,5 +141,9 @@ $(() => {
             res.json()
             document.location.pathname = "/article/all"
         })
+    })
+
+    $("#admin-panel").on("click", function() {
+        $("iframe").attr("src", "http://localhost:3000/view/admin")
     })
 })

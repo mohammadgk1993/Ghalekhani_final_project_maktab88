@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const createError = require("http-errors")
 
 const ArticleSchema = new mongoose.Schema({
     title: {
@@ -25,13 +25,25 @@ const ArticleSchema = new mongoose.Schema({
         type:[String]
     },
     author: {
-        type: String,
-        ref: 'User',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         required: [true,"author is required"]
     }
 }, {
     timestamps: true
 });
+
+
+ArticleSchema.pre(['find', 'findOne'], async function(doc) {
+    try {
+        if (!!doc) {
+            return await this
+            .populate('author', {username:1})
+        }
+    } catch (error) {
+        return createError(500, error.message)
+    }
+})
 
 
 module.exports = mongoose.model("article", ArticleSchema);

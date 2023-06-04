@@ -9,55 +9,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
   </head>
 
-  <body id="<%= user.username %>">
+  <body id="<%= user._id %>">
     <div class="sidebar">
       <div class="profile">
         <div class="profile-photo">
-
           <img src="<%= user.avatar %>" alt="Profile Photo">
-
           <button id="edit-photo-icon">
             <i class="fas fa-pencil-alt" title="Edit profile photo"></i>
           </button>
-
           <form id="myForm" action="/user/uploadAvatar" enctype="multipart/form-data" method="post">
             <input type="file" name="avatar" id="fileToUpload">
           </form>
-
         </div>
+
         <h2 id="profile-name"><%= user.username %></h2>
 
-        <button id="show-user-info">Account Info</button>
-        <button id="show-modal-btn">Update Info</button>
-        <button id="show-user-delete">Delete Account</button>
-
-        <div class="modal-3" id="myModal-info">
-          <div class="modal-content-3">
-            <span class="close-3">&times;</span>
-            <p id="firstName">First Name: <%= user.firstName %></p>
-            <p id="lastName">Last Name: <%= user.lastName %></p>
-            <p id="username">UserName: <%= user.username %></p>
-            <p id="gender">Gender: <%= user.gender %></p>
-            <p id="phoneNumber">Phone Number: <%= user.phoneNumber %></p>
+        <button id="show-user-setting" class="btn">User Setting</button>
+        
+        <div class="modal" id="myModal-setting">
+          <div class="modal-content content-setting">
+            <span class="close close-setting">&times;</span>
+            <button id="show-user-info" class="btn">Account Info</button>
+            <button id="show-user-update" class="btn">Update Info</button>
+            <button id="show-user-delete" class="btn">Delete Account</button>
           </div>
         </div>
 
-        <div class="modal-2" id="myModal-delete">
-          <div class="modal-content-2">
-            <span class="close-2">&times;</span>
-            <p>Are you sure?</p>
-            <form id="delete-user">
-              <button type="submit">Yes</button>
-            </form>
-            <button class="close-2">No</button>
+        <div class="modal" id="myModal-info">
+          <div class="modal-content content-info">
+            <span class="close close-info">&times;</span>
+            <p id="firstName"><b>First Name:</b> <%= user.firstName %></p>
+            <p id="lastName"><b>Last Name:</b> <%= user.lastName %></p>
+            <p id="username"><b>UserName:</b> <%= user.username %></p>
+            <p id="gender"><b>Gender:</b> <%= user.gender %></p>
+            <p id="phoneNumber"><b>Phone Number:</b> <%= user.phoneNumber %></p>
+            <b></b>
           </div>
         </div>
 
-        <div class="modal" id="myModal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-
-            <form id="update-user">
+        <div class="modal" id="myModal-update">
+          <div class="modal-content content-update">
+            <span class="close close-update">&times;</span>
+            <form id="update-user" class="form">
               <label for="update-user-firstName">First Name</label>
               <input type="text" id="update-user-firstName">
               <label for="update-user-lastName">Last Name</label>
@@ -73,9 +66,20 @@
               </select>
               <label for="update-user-phoneNumber">Phone Number</label>
               <input type="text" id="update-user-phoneNumber">
-              <button type="submit">Update User</button>
+              <button type="submit" class="btn">Update User</button>
             </form>
 
+          </div>
+        </div>
+
+        <div class="modal" id="myModal-delete">
+          <div class="modal-content content-delete">
+            <span class="close close-delete">&times;</span>
+            <h3>Are you sure?</h3>
+            <form id="delete-user">
+              <button type="submit" class="btn">Yes</button>
+            </form>
+            <button class="btn close-delete">No</button>
           </div>
         </div>
 
@@ -83,7 +87,7 @@
 
 
       <form action="/user/logout" method="get" id="logout">
-        <button type="submit">Log Out</button>
+        <button type="submit" class="btn">Log Out</button>
       </form>
     </div>
 
@@ -91,7 +95,29 @@
       <div id="article-menu">
         <button id="explore-btn">Explore</button>
         <button id="my-articles-btn">My Articles</button>
+        <button id="create-article">+</button>
+        <% if (user.role == 'admin') { %>
+          <button id="admin-panel">Admin Panel</button>
+        <% } %>
       </div>
+
+      <div class="modal" id="myModal-article">
+        <div class="modal-content content-article form" action="/article/" method="post" enctype="multipart/form-data">
+          <span class="close close-article">&times;</span>
+          <form class="form">
+            <label>Thumbnail</label>
+            <input class="btn" type="file" id="create-article-thumbnail" name="thumbnail">
+            <label>Title</label>
+            <input type="text" id="create-article-title" name="title">
+            <label>Content</label>
+            <input type="text" id="create-article-content" name="content">
+            <label>Author</label>
+            <input type="text" id="create-article-author" name="author" value="<%= user.username %>">
+            <button class="btn" type="submit">Create Article</button>
+          </form>
+          </div>
+      </div>
+
       <div id="articles">
         <iframe src="http://localhost:3000/article/all"></iframe>
       </div>

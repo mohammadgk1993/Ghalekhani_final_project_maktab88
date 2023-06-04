@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/admin.css">
+    <title>Admin Panel</title>
+  </head>
+
+  <body>
+    <table>
+      <thead>
+        <tr>
+            <% const keys = Object.keys(JSON.parse(JSON.stringify(users[0]))) %>
+            <% if (keys.includes('avatar')) { %>
+              <th>avatar</th>
+            <% } %>
+            <% for (let i of keys) { %>
+              <% if ( i == '_id' ) continue %>
+              <% if ( i == 'avatar' ) continue %>
+                <th><%= i %></th>
+            <% } %>
+            <th></th>
+        </tr>
+      </thead>
+      <tbody>
+          <% for (let i of users) { %>
+              <tr id="<%= Object.entries(JSON.parse(JSON.stringify(i)))[0][1]%>">
+              <% const values = Object.entries(JSON.parse(JSON.stringify(i))) %>
+              <% for (let j of values) { %>
+                <% if (j[0] == 'avatar') { %>
+                  <td><img src="<%= j[1] %>"></td>
+                  <% continue %>
+                  <% } %>
+              <% } %>
+              <% for (let j of values) { %>
+                <% if (j[0] == '_id') continue %>
+                <% if (j[0] == 'avatar') { %>
+                  <% continue %>
+                <% } %>
+                  <td><%= j[1] %></td>
+              <% } %>
+              <td><button class="btn delete">delete</button></td>
+              </tr>
+          <% } %>
+      </tbody>
+    </table>
+
+    <div id="pagination-btn">
+      <% for (let i = 1 ; i <= total + 1 ; i++) { %>
+        <button class="btn pagination"><%= i %></button>
+      <% } %>
+    </div>
+
+    <div class="modal" id="myModal-delete">
+      <div class="modal-content content-delete">
+        <span class="close close-delete">&times;</span>
+        <h3>Are you sure?</h3>
+        <br>
+        <div id="delete-choice">
+          <button class="btn yes">Yes</button>
+          <button class="btn" id="no">No</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/javascripts/admin.js"></script>
+  </body>
+</html>

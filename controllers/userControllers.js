@@ -7,11 +7,34 @@ const { userAvatarUpload } = require("../utils/multer-settings")
 const bcrypt = require('bcryptjs');
 
 
+const getAdminPanel= async (req,res,next) => {
+    try {
+        let page = 1
+        let limit = 6
+        if (!!req.query.page && req.query.page > 0) {
+            page = req.query.page
+        }
+        
+        if (!!req.query.limit && req.query.limit > 0) {
+            limit = req.query.limit
+        }
+
+        const skip = (page - 1) * limit
+        const users = await User.find({role:'blogger'},
+        {createdAt:0,updatedAt:0,__v:0, password:0, role: 0})
+        .skip(skip).limit(limit)
+        const totalPages = Math.ceil(users.length / limit)
+        // res.json(users).status(200)
+        res.render('pages/admin', {users: users, total: totalPages})
+    } catch (error) {
+        return next(createError(500, error.message))
+    }
+}
+
 const getRegisterPage = (req, res, next) => {
-    if (req.session.user) return res.redirect("/user/dashboard");
+    if (req.session.user) return res.redirect("/view/dashboard");
     res.render("pages/log&sign", {errorMessage: req.query.errorMessage? req.query.errorMessage : null});
 };
-
 
 const registerUser = async (req, res, next) => {
     const newUser = new User({
@@ -25,13 +48,11 @@ const registerUser = async (req, res, next) => {
 
     try {
         await newUser.save();
-
-        // res.render("pages/login");
-        res.redirect("/user/login");
+        res.redirect("/view/login");
     } catch (err) {
         // res.render("pages/register", {errorMessage: "Server Error!"});
         res.redirect(url.format({
-            pathname:"/user/register",
+            pathname:"/view/register",
             query: {
                "errorMessage": "Server Error!"
              }
@@ -40,9 +61,8 @@ const registerUser = async (req, res, next) => {
     };
 };
 
-
 const getLoginPage = (req, res, next) => {
-    if (req.session.user) return res.redirect("/user/dashboard");
+    if (req.session.user) return res.redirect("/view/dashboard");
 
     // let errorMessage = null;
     // if (req.query.errorMessage) errorMessage = req.query.errorMessage;
@@ -51,20 +71,14 @@ const getLoginPage = (req, res, next) => {
     res.render("pages/log&sign", {errorMessage});
 };
 
-
 const loginUser = async (req, res, next) => {
     try {
         const user = await User.findOne({username: req.body.username});
-        if (!user) return res.redirect(`/user/login?errorMessage=User not found!`);
-
-        const isMatch = await user.validatePassword(req.body.password);
-        if (!isMatch) return res.redirect(`/user/login?errorMessage=User not found!`);
-
-        req.session.user = user;
-        res.redirect("/user/dashboard");
+        req.session.user = user._id;
+        res.redirect("/view/dashboard");
     } catch (err) {
         res.redirect(url.format({
-            pathname:"/user/login",
+            pathname:"/view/login",
             query: {
                "errorMessage": "Server Error!"
              }
@@ -72,20 +86,22 @@ const loginUser = async (req, res, next) => {
     };
 };
 
-
-const getDashboardPage = (req, res, next) => {
-    if (!req.session.user) return res.redirect("/user/login");
-
-    res.render("pages/dashboard", {user: req.session.user});
+const getDashboardPage = async (req, res, next) => {
+    try {
+        if (!req.session.user) return res.redirect("/view/login");
+        const user = await User.findById(req.session.user)
+        const { _id , firstName, lastName, username, gender, phoneNumber, role, avatar} = user
+        res.render("pages/dashboard", {user: { _id , firstName, lastName, username, gender, phoneNumber, role, avatar}});
+    } catch (error) {
+        return next(createError(500, err.message))
+    }
 };
-
 
 const logout = (req, res, next) => {
     req.session.destroy();
 
-    res.redirect("/user/login");
+    res.redirect("/view/login");
 };
-
 
 const uploadAvatar = (req, res, next) => {
     const uploadUserAvatar = userAvatarUpload.single("avatar");
@@ -101,16 +117,18 @@ const uploadAvatar = (req, res, next) => {
         if (!req.file) return res.status(400).send("File not send!");
         
         try {
+            const id = req.session.user
+            const user = await User.findById( id )
             // delete old avatar
-            if (req.session.user.avatar != "/images/userAvatars/icon.png") {
-                await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
+            if (user.avatar != "/images/userAvatars/icon.png") {
+                await fs.unlink(path.join(__dirname, "../public", user.avatar))
             }
 
-            const user = await User.findByIdAndUpdate(req.session.user._id, {
+            await User.findByIdAndUpdate( id, {
                 avatar: "/images/userAvatars/" + req.file.filename
             }, {new: true});
-            
-            req.session.user.avatar = user.avatar;
+
+            // req.session.user.avatar = user.avatar;
             
             // return res.json(user);
             res.redirect("/user/dashboard");
@@ -119,7 +137,6 @@ const uploadAvatar = (req, res, next) => {
         };
     });
 };
-
 
 const bulkUpload = (req, res, next) => {
     const uploadUserAvatar = userAvatarUpload.array("gallery");
@@ -140,55 +157,49 @@ const bulkUpload = (req, res, next) => {
     });
 };
 
-const updateUser = (req, res, next) => {
-    let updatedUser = {}
-    const id = req.session.user._id
-    console.log(id)
+const updateUser = async (req, res, next) => {
+    try {
+        let updatedUser = {}
+        const id = req.session.user
+        console.log(id)
 
-    if (!!req.body.firstName) updatedUser.firstName = req.body.firstName
-    if (!!req.body.lastName) updatedUser.lastName = req.body.lastName
-    if (!!req.body.password) updatedUser.password = req.body.password
-    if (!!req.body.gender) updatedUser.gender = req.body.gender
-    if (!!req.body.role) updatedUser.phoneNumber = req.body.phoneNumber
+        if (!!req.body.firstName) updatedUser.firstName = req.body.firstName
+        if (!!req.body.lastName) updatedUser.lastName = req.body.lastName
+        if (!!req.body.password) updatedUser.password = req.body.password
+        if (!!req.body.gender) updatedUser.gender = req.body.gender
+        if (!!req.body.role) updatedUser.phoneNumber = req.body.phoneNumber
 
-    const salt = bcrypt.genSalt(10);
-    if (!!updatedUser.password) {
-        updatedUser.password =  bcrypt.hash(updatedUser.password, salt);
+        const salt = bcrypt.genSalt(10);
+        if (!!updatedUser.password) {
+            updatedUser.password =  bcrypt.hash(updatedUser.password, salt);
+        }
+        
+        const user = await User.findByIdAndUpdate(id, updatedUser)
+        res.render('pages/dashboard', {user: { firstName, lastName, username, gender, phoneNumber, role, avatar}})
+    } catch (error) {
+        return next(createError(500, error.message))
     }
-
-    console.log(req.body)
-    User.findByIdAndUpdate(id,updatedUser)
-    .then(data => {
-        req.session.user = {...req.session.user,...updatedUser}
-        req.session.reload(function(err) {
-            if (err) {
-                console.log(err)
-            }
-        });
-        console.log(req.session.user)
-        const {firstName,lastName,username,password,gender,phoneNumber} = req.session.user
-        res.json({firstName,lastName,username,password,gender,phoneNumber})
-    })
-    .catch(err => next(createError(500, err.message)));
 }
-
 
 const deleteUser = async (req, res, next) => {
     try {
-        await User.deleteOne({username:req.session.user.username})
-        if (req.session.user.avatar != "/images/userAvatars/icon.png") {
-            await fs.unlink(path.join(__dirname, "../public", req.session.user.avatar))
+        const id = await req.params.id
+        const user = await User.findById(id)
+        if (user.avatar != "/images/userAvatars/icon.png") {
+            await fs.unlink(path.join(__dirname, "../public", user.avatar))
         }
+        await User.findByIdAndDelete(id)
         req.session.destroy();
-        console.log("ok")
-        res.json(data)
+        res.json(user)
+        console.log("user deleted")
     } catch (err) {
-        next(createError(500, err.message))
+        return next(createError(500, err.message))
     }
 }
 
 
 module.exports = {
+    getAdminPanel,
     getRegisterPage,
     registerUser,
     getLoginPage,
@@ -200,3 +211,41 @@ module.exports = {
     updateUser,
     deleteUser
 };
+
+
+
+// const updateUser = (req, res, next) => {
+//     let updatedUser = {}
+//     const id = req.session.user
+//     console.log(id)
+
+//     if (!!req.body.firstName) updatedUser.firstName = req.body.firstName
+//     if (!!req.body.lastName) updatedUser.lastName = req.body.lastName
+//     if (!!req.body.password) updatedUser.password = req.body.password
+//     if (!!req.body.gender) updatedUser.gender = req.body.gender
+//     if (!!req.body.role) updatedUser.phoneNumber = req.body.phoneNumber
+
+//     const salt = bcrypt.genSalt(10);
+//     if (!!updatedUser.password) {
+//         updatedUser.password =  bcrypt.hash(updatedUser.password, salt);
+//     }
+
+//     console.log(req.body)
+//     // User.findByIdAndUpdate(id,updatedUser)
+//     // .then(data => {
+        
+
+
+//     //     req.session.user = {...req.session.user,...updatedUser}
+//     //     req.session.reload(function(err) {
+//     //         if (err) {
+//     //             console.log(err)
+//     //         }
+//     //     });
+//     //     console.log(req.session.user)
+//     //     const {firstName,lastName,username,password,gender,phoneNumber} = req.session.user
+//     //     res.json({firstName,lastName,username,password,gender,phoneNumber})
+//     // })
+
+//     // .catch(err => next(createError(500, err.message)));
+// }
