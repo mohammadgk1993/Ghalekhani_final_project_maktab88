@@ -9,7 +9,6 @@ const session = require("express-session");
 
 const viewsRouter = require('./routes/viewsRouter')
 const userRouter = require('./routes/userRouter');
-const adminRouter = require('./routes/adminRouter');
 const articleRouter = require('./routes/articleRouter')
 const commentRouter = require('./routes/commentRouter')
 
@@ -38,7 +37,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/view', viewsRouter)
 app.use('/user', userRouter);
-app.use('/admin', adminRouter);
 app.use('/article', articleRouter)
 app.use('/comment', commentRouter)
 

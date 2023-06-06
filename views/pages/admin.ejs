@@ -48,8 +48,8 @@
     </table>
 
     <div id="pagination-btn">
-      <% for (let i = 1 ; i <= total + 1 ; i++) { %>
-        <button class="btn pagination"><%= i %></button>
+      <% for (let i = 0 ; i < total ; i++) { %>
+        <button class="btn pagination"><%= i + 1 %></button>
       <% } %>
     </div>
 

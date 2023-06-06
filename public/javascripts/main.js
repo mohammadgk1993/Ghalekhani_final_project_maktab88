@@ -28,8 +28,9 @@ $(() => {
 
     $("#delete-user").on("submit",function (e) { 
         e.preventDefault();
-        
-        fetch(`/user/`,
+        const id = $('body').attr('id')
+
+        fetch(`/user/${id}`,
         {method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ $(() => {
         .then(res => res.json())
         .then(res => {
           console.log(res)
-          document.location.pathname = "/user/login"
+          document.location.pathname = "/view/login"
         })
     });
 
@@ -85,10 +86,6 @@ $(() => {
     $("#create-article").on("click", function() {
         $("iframe").attr("src", `http://localhost:3000/view/create-article`)
     })
-
-    // $(".close-article").on("click", function() {
-    //     $("#myModal-article").css("display","none")
-    // })
 
     $("#my-articles-btn").on("click", function() {
         $("iframe").attr("src", `http://localhost:3000/article/all?user=${$("body").attr("id")}`)
@@ -145,5 +142,14 @@ $(() => {
 
     $("#admin-panel").on("click", function() {
         $("iframe").attr("src", "http://localhost:3000/view/admin")
+    })
+
+    $("#create-article-form").on("submit", function() {
+        if ($("#title").val().trim() == '') $("#create-article-form-error").val('title must not be empty')
+        if ($("#content").val().trim() == '') $("#create-article-form-error").val('content must not be empty')
+        if (!$("#thumbnail").val()) $("create-article-form-error").val('choose one file for thumbnail')
+        if (!$("#contentImages").val()) $("create-article-form-error").val('At least choose one file for content images')
+
+        return
     })
 })

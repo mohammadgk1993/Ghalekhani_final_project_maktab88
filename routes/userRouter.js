@@ -32,7 +32,10 @@ router.post("/uploadAvatar", isLogin, uploadAvatar)
 
 router.patch("/", isLogin, updateUser)
 
-router.delete("/:id", isLogin, accessValidator, deleteUser)
+router.delete("/:id",
+//  isLogin,
+//  accessValidator, 
+ deleteUser)
 
 
 module.exports = router;

@@ -38,7 +38,7 @@ ArticleSchema.pre(['find', 'findOne'], async function(doc) {
     try {
         if (!!doc) {
             return await this
-            .populate('author', {username:1})
+            .populate('author', {username:1, role:1, _id:1})
         }
     } catch (error) {
         return createError(500, error.message)

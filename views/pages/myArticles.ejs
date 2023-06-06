@@ -36,15 +36,12 @@
         </div>
         
         <div>
-            <!-- <% let amount = JSON.parse(JSON.stringify(articles)).length %>
-            <% let buttons = Math.floor((amount%6)/6) + Math.ceil(amount/6) %>
-            <% for (let i = 0; i < buttons; i++) { %>
-                <button><%= i + 1%></button>
-            <% } %> -->
-
-            <% for (let i = 1 ; i <= total ; i++) { %>
-                <button class="pagination"><%= i %></button>
+            <% for (let i = 0 ; i < total ; i++) { %>
+                <button class="pagination"><%= i + 1 %></button>
               <% } %>
         </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/javascripts/article.js"></script>
     </body>
 </html>

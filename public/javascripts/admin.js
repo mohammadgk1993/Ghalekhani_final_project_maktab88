@@ -24,9 +24,10 @@ $(() => {
         fetch(`http://localhost:3000/user/${id}`, {
         method: 'DELETE'
         })
-        .then(res => res.json())
-        .then(data => {
+        .then(res => {
+            $("#myModal-delete").css("display","none")
             location.reload()
+            res.json()
         })
     })
 

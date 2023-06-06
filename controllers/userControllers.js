@@ -3,6 +3,8 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs/promises');
 const User = require("../models/User");
+const Article = require("../models/Article");
+const Comment = require("../models/comment");
 const { userAvatarUpload } = require("../utils/multer-settings")
 const bcrypt = require('bcryptjs');
 
@@ -23,7 +25,9 @@ const getAdminPanel= async (req,res,next) => {
         const users = await User.find({role:'blogger'},
         {createdAt:0,updatedAt:0,__v:0, password:0, role: 0})
         .skip(skip).limit(limit)
-        const totalPages = Math.ceil(users.length / limit)
+
+        const allUsers = await User.find({role:'blogger'})
+        const totalPages = Math.ceil(allUsers.length / limit)
         // res.json(users).status(200)
         res.render('pages/admin', {users: users, total: totalPages})
     } catch (error) {
@@ -131,7 +135,7 @@ const uploadAvatar = (req, res, next) => {
             // req.session.user.avatar = user.avatar;
             
             // return res.json(user);
-            res.redirect("/user/dashboard");
+            res.redirect("/view/dashboard");
         } catch (err) {
             return next(createError(500, "Server Error!"))
         };
@@ -188,9 +192,32 @@ const deleteUser = async (req, res, next) => {
         if (user.avatar != "/images/userAvatars/icon.png") {
             await fs.unlink(path.join(__dirname, "../public", user.avatar))
         }
+
         await User.findByIdAndDelete(id)
-        req.session.destroy();
-        res.json(user)
+        const articles = await Article.find({author: id})
+
+        for (let article of articles) {
+            await fs.unlink(path.join(__dirname, "../public", article.thumbnail))
+            if (!!article.contentImages) {
+                for (let image of article.contentImages) {
+                    await fs.unlink(path.join(__dirname, "../public", image))
+                }
+            }
+
+            await Article.findByIdAndDelete(article._id)
+            await Comment.deleteMany({article: article._id})
+        }
+
+        await Comment.deleteMany({author: id})
+        if (user.role == 'admin') {
+            console.log(role)
+            res.json(user)
+        } else {
+            console.log(role)
+            req.session.destroy();
+            res.json(user)
+        }
+
         console.log("user deleted")
     } catch (err) {
         return next(createError(500, err.message))
@@ -211,41 +238,3 @@ module.exports = {
     updateUser,
     deleteUser
 };
-
-
-
-// const updateUser = (req, res, next) => {
-//     let updatedUser = {}
-//     const id = req.session.user
-//     console.log(id)
-
-//     if (!!req.body.firstName) updatedUser.firstName = req.body.firstName
-//     if (!!req.body.lastName) updatedUser.lastName = req.body.lastName
-//     if (!!req.body.password) updatedUser.password = req.body.password
-//     if (!!req.body.gender) updatedUser.gender = req.body.gender
-//     if (!!req.body.role) updatedUser.phoneNumber = req.body.phoneNumber
-
-//     const salt = bcrypt.genSalt(10);
-//     if (!!updatedUser.password) {
-//         updatedUser.password =  bcrypt.hash(updatedUser.password, salt);
-//     }
-
-//     console.log(req.body)
-//     // User.findByIdAndUpdate(id,updatedUser)
-//     // .then(data => {
-        
-
-
-//     //     req.session.user = {...req.session.user,...updatedUser}
-//     //     req.session.reload(function(err) {
-//     //         if (err) {
-//     //             console.log(err)
-//     //         }
-//     //     });
-//     //     console.log(req.session.user)
-//     //     const {firstName,lastName,username,password,gender,phoneNumber} = req.session.user
-//     //     res.json({firstName,lastName,username,password,gender,phoneNumber})
-//     // })
-
-//     // .catch(err => next(createError(500, err.message)));
-// }

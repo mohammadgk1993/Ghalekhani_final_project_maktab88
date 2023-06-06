@@ -11,9 +11,7 @@ const Article = require('../models/Article');
 
 router.get("/all", isLogin, getAllArticles)
 
-router.post("/",
-//  isLogin,
-//   checkUserExistance,
+router.post("/", isLogin, checkUserExistance,
   thumbnailAvatarUpload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'contentImages', maxCount: 5 }
@@ -21,22 +19,13 @@ router.post("/",
 
 router.get("/:id" , isLogin, articleExistance, readArticle)
 
-router.patch("/:id",
-//  isLogin,
-  // articleExistance,
+router.patch("/:id", isLogin, articleExistance,
   thumbnailAvatarUpload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'contentImages', maxCount: 5 }
     ]),
    updateArticle)
 
-// router.delete("/all", async (req,res,next) => {
-//     await Article.deleteMany({})
-// })
-
-router.delete("/:id",
-//  isLogin,
-  // articleExistance,
-   deleteArticle)
+router.delete("/:id", isLogin, articleExistance, deleteArticle)
 
 module.exports = router;

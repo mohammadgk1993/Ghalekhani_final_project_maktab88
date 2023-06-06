@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs/promises');
 const Article = require("../models/Article");
 const User = require('../models/User');
+const Comment = require('../models/comment');
 const { thumbnailAvatarUpload } = require('../utils/multer-settings');
 
 
@@ -31,15 +32,17 @@ const getAllArticles = async (req,res,next) => {
 
         if (!!req.query.user) {
             const articles = await Article.find({author:req.query.user},{__v:0,updatedAt:0})
+            .sort({createdAt: -1})
             .skip(skip).limit(limit)
-            .populate('author', {username:1})
-            const totalPages = Math.ceil(articles.length / limit)
-            // res.json(articles).status(200)
+            const allArticles = await Article.find({author:req.query.user})
+            const totalPages = Math.ceil(allArticles.length/limit)
             res.render('pages/myArticles', {articles: articles, total: totalPages}) 
         } else {
             const articles = await Article.find({},{__v:0,updatedAt:0})
-            const totalPages = Math.ceil(articles.length / limit)
-            // return res.json(articles).status(200)
+            .sort({createdAt: -1})
+            .skip(skip).limit(limit)
+            const allArticles = await Article.find({})
+            const totalPages = Math.ceil(allArticles.length/limit)
             res.render('pages/explore', {articles: articles, total: totalPages})
         }
     } catch (error) {
@@ -53,15 +56,15 @@ const createArticle = async (req,res,next) => {
 
         newArticle.title = req.body.title
         newArticle.thumbnail = req.files.thumbnail[0].path.slice(6)
+        newArticle.description = req.body.content.slice(0,150)
         newArticle.content = req.body.content
         newArticle.contentImages = 
         req.files.contentImages.map(val => val.path.slice(6))
-        // newArticle.author = req.session.user
-        newArticle.author = req.body.author
+        newArticle.author = req.session.user
 
         await newArticle.save()
-        res.json(newArticle).status(201)
-        // res.redirect("pages/explore")
+        // res.json(newArticle).status(201)
+        res.redirect("/article/all")
 
     } catch (error) {
         return next(createError(500, error.message))
@@ -70,13 +73,10 @@ const createArticle = async (req,res,next) => {
 
 const readArticle = async (req,res,next) => {
     try {
-        if (!req.session) {
-            next(createError(403, 'permission denied'))
-        }
-        // const article = await Article.findById(req.params.id)
+        const id = await req.session.user
+        const user = await User.findById(id)
         const article = await Article.findOne({_id: req.params.id})
-        // return res.json(article).status(200)
-        res.render("pages/article", {article:article})
+        res.render("pages/article", {article:article, id: req.session.user, role: user.role})
     } catch (error) {
         return next(createError(500, error.message))
     }
@@ -121,7 +121,9 @@ const deleteArticle = async (req,res,next) => {
                 await fs.unlink(path.join(__dirname, "../public", image))
             }
         }
-        return res.json(article).status(200)
+        await Comment.deleteMany({article: req.params.id})
+        // return res.json(article).status(200)
+        res.redirect("/article/all")
     } catch (error) {
         console.log(error)
         return next(createError(500, "Server Error!"))

@@ -9,21 +9,22 @@
   </head>
 
   <body>
-    <form method="post" action="http://localhost:3000/article" enctype="multipart/form-data">
+    <form id="create-article-form" method="post" action="http://localhost:3000/article" enctype="multipart/form-data">
       <label class="btn">Thumbnail
-        <input type="file" name="thumbnail" class="file">
+        <input type="file" id="thumbnail" name="thumbnail" class="file">
       </label>
       <br>
       <label>Title:</label>
-      <input type="text" name="title">
+      <input type="text" name="title" id="title">
       <br>
       <label>Content:</label>
-      <input type="text" name="content">
+      <textarea name="content" id="content" cols="30" rows="10"></textarea>
       <label class="btn">Content Images
-        <input type="file" name="contentImages" class="file">
+        <input type="file" id="contentImages" name="contentImages" class="file">
       </label>
       <br>
       <button type="submit" id="create-btn">Create Article</button>
+      <p id="create-article-form-error"></p>
     </form>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

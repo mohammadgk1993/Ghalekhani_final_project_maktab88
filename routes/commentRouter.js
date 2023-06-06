@@ -8,10 +8,7 @@ const { isLogin } = require('../middlewares/auth/auth');
 
 router.get("/all",  isLogin, getAllComments)
 
-router.post("/",
-isLogin,
- createCommentValidator,
-  createComment)
+router.post("/", isLogin, createCommentValidator, createComment)
 
 router.get("/:id" , isLogin, commentExistance, readComment)
 
@@ -19,8 +16,5 @@ router.patch("/:id", isLogin, commentExistance, updateComment)
 
 router.delete("/:id", isLogin, userValidator, commentExistance, deleteComment)
 
-// router.delete("/all", async (req,res,next) => {
-//     await Article.deleteMany({})
-// })
 
 module.exports = router;
