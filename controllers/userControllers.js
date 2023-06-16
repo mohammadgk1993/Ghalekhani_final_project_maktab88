@@ -54,14 +54,12 @@ const registerUser = async (req, res, next) => {
         await newUser.save();
         res.redirect("/view/login");
     } catch (err) {
-        // res.render("pages/register", {errorMessage: "Server Error!"});
         res.redirect(url.format({
             pathname:"/view/register",
             query: {
                "errorMessage": "Server Error!"
              }
-          }))
-        //   res.redirect(`/user/register?errorMessage=Server Error`);
+        }))
     };
 };
 

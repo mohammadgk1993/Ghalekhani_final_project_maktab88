@@ -5,36 +5,78 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/stylesheets/article.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/stylesheets/article.css">
     </head>
     <body id="<%= article._id %>">
-
         <div id="article">
             <img src="<%= article.thumbnail %>">
+
+            <% if (article.author._id == id) { %>
+                <button id="edit-thumbnail">
+                    <i style="color: white;" class="fa fa-pencil" title="Edit profile photo"></i>
+                </button>
+    
+                <form id="thumbnail-form"  enctype="multipart/form-data">
+                    <input type="file" name="thumbnail" id="thumbnail-input-file">
+                </form>
+            <% } %>
+
             <div id="article-info">
-                <h2>Title: <%= article.title %></h2>
-                <p> <b><%= article.content %></b></p>
-                <p> <b>Author: <%= article.author.username %></b></p>
-                <% for (let image of article.contentImages) { %>
-                    <img src="<%= image %>">
+                <span style="border: none;font-weight:bolder;font-size: x-large;">Title:</span>
+                <input id="article-title" style="border: none;font-weight:bolder;font-size: x-large;" type="text" value="<%= article.title %>" readonly>
+                <% if (article.author._id == id) { %>
+                    <div>
+                        <button title="edit title" class="btn" id="edit-title-button"><i class="fa fa-pencil"></i></button>
+                        <button title="accept edit" id="edit-title-yes"><i class="fa fa-check"></i></button>
+                        <button title="cancel edit" id="edit-title-no"><i class="fa fa-remove"></i></button>
+                    </div>
                 <% } %>
+
+                <textarea id="article-content" style="width: 100%;height: fit-content;border: none;font-size: larger;" readonly><%= article.content %></textarea>
+                <% if (article.author._id == id) { %>
+                    <div>
+                        <button title="edit content" class="btn" id="edit-content-button"><i class="fa fa-pencil"></i></button>
+                        <button title="accept edit" id="edit-content-yes"><i class="fa fa-check"></i></button>
+                        <button title="cancel comment" id="edit-content-no"><i class="fa fa-remove"></i></button>
+                    </div>
+                <% } %>
+                
+                <div id="content-images-container">
+                    <% for (let image of article.contentImages) { %>
+                        <div class="image-item">
+                            <img src="<%= image %>" class="images">
+                            <% if (article.author._id == id) { %>
+                                <button type="submit" class="image-delete-button"><i class="fa fa-trash-o"></i></button>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <% if (article.author._id == id) { %>
+                    <button id="add-content-images-btn" title="add new images">+</button>
+                    <form id="add-content-images-form" enctype="multipart/form-data">
+                        <input type="file" name="contentImages" id="add-content-images-files">
+                    </form>
+                <% } %>
+
+                <p><b>Author: <%= article.author.username %></b></p>
                 <p><small>Created At: <%= article.createdAt %></small></p>
 
                 <div id="article-crud">
                     <% if (role == 'admin') { %>
-                        <button id="<%= article._id %>" title="Delete Article" class="delete-article"><i class="fa fa-trash-o"></i></button>
+                        <button title="Delete Article" style="background-color: red;" id="<%= article._id %>" title="Delete Article" class="delete-article"><i class="fa fa-trash-o"></i></button>
                     <% } else if (article.author._id == id) { %>
-                        <button id="<%= article._id %>" title="Delete Article" class="delete-article"><i class="fa fa-trash-o"></i></button>
+                        <button title="Delete Article" style="background-color: red;" id="<%= article._id %>" title="Delete Article" class="delete-article"><i class="fa fa-trash-o"></i></button>
                     <% } %>
                 </div>
             </div>
         </div>
 
         <div id="comment">
-                <textarea id="content" cols="30" rows="6" placeholder="comment..."></textarea>
-                <input type="text" id="article-id" value="<%= article._id %>" style="display: none;">
-                <button id="create-comment">comment</button>
+            <textarea id="content" cols="30" rows="6" placeholder="comment..."></textarea>
+            <input type="text" id="article-id" value="<%= article._id %>" style="display: none;">
+            <button id="create-comment">comment</button>
         </div>
     
             <iframe src="http://localhost:3000/comment/all?article=<%= article._id %>" >

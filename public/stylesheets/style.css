@@ -1,4 +1,3 @@
-/* @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800'); */
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
 
 * {
@@ -17,16 +16,17 @@ body {
   margin: 0;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
 }
 
 #articles {
   width: 100%;
-  height: 100vh;
+  height: 100%;
 }
 
 iframe {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   border: none;
 }
 
@@ -199,7 +199,9 @@ form button {
 
 #article-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #article-menu {

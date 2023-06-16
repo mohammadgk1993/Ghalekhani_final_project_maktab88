@@ -8,7 +8,9 @@
 }
 
 body {
-    margin: 2.5%;
+    width: 100%;
+    height: 100%;
+    padding: 1%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -56,7 +58,7 @@ body {
 iframe {
     margin-top: 2%;
     width: 80%;
-    height: 250px;
+    height:auto;
     border-radius: 25px;
     border: none;
 }
@@ -68,4 +70,48 @@ button {
     border-radius: 20px;
     padding: 1.5% !important;
     font-size: 18px;
+}
+
+#thumbnail-form {
+    display: none;
+}
+
+#add-content-images-form {
+    display: none;
+}
+
+#content-images-container {
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+#content-images-container div {
+    width: 30%;
+}
+
+#content-images-container div img {
+    object-fit: cover;
+}
+
+.image-item {
+    position: relative;
+}
+  
+.image-delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#edit-title-yes, #edit-title-no, #edit-content-yes, #edit-content-no{
+    display: none;
 }

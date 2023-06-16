@@ -7,16 +7,25 @@
     <link rel="stylesheet" href="/stylesheets/style.css">
     <title><%= user.firstName %>'s profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 
   <body id="<%= user._id %>">
     <div class="sidebar">
       <div class="profile">
+        <div id="slide-button" style="display: none;height: fit-content;margin: 0;padding: 1%;text-align: right;font-size: 20px;color: white;">
+          <i class="fa fa-bars"></i>
+        </div>
         <div class="profile-photo">
           <img src="<%= user.avatar %>" alt="Profile Photo">
           <button id="edit-photo-icon">
             <i class="fas fa-pencil-alt" title="Edit profile photo"></i>
           </button>
+
+          <button style="display: none;" id="delete-photo-icon">
+            <i class="fa fa-remove"></i>
+          </button>
+
           <form id="myForm" action="/user/uploadAvatar" enctype="multipart/form-data" method="post">
             <input type="file" name="avatar" id="fileToUpload">
           </form>
@@ -24,14 +33,14 @@
 
         <h2 id="profile-name"><%= user.username %></h2>
 
-        <button id="show-user-setting" class="btn">User Setting</button>
+        <button id="show-user-setting" class="btn"><i class="fa fa-cog" aria-hidden="true"></i> User Setting</button>
         
         <div class="modal" id="myModal-setting">
           <div class="modal-content content-setting">
             <span class="close close-setting">&times;</span>
-            <button id="show-user-info" class="btn">Account Info</button>
-            <button id="show-user-update" class="btn">Update Info</button>
-            <button id="show-user-delete" class="btn">Delete Account</button>
+            <button id="show-user-info" class="btn"><i class="fa fa-info" aria-hidden="true"></i> Account Info</button>
+            <button id="show-user-update" class="btn"><i class="fa fa-pencil" aria-hidden="true"></i> Update Info</button>
+            <button id="show-user-delete" class="btn"><i class="fa fa-remove" aria-hidden="true"></i> Delete Account</button>
           </div>
         </div>
 

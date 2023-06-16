@@ -5,13 +5,12 @@ const {
 } = require("../controllers/articleController");
 const { thumbnailAvatarUpload } = require('../utils/multer-settings');
 const { isLogin } = require("../middlewares/auth/auth");
-const { articleExistance, checkUserExistance, checkArticleOwner } = require('../middlewares/articleMiddlewares');
-const Article = require('../models/Article');
+const { articleExistance, access } = require('../middlewares/articleMiddlewares');
 
 
 router.get("/all", isLogin, getAllArticles)
 
-router.post("/", isLogin, checkUserExistance,
+router.post("/", isLogin,
   thumbnailAvatarUpload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'contentImages', maxCount: 5 }
@@ -26,6 +25,7 @@ router.patch("/:id", isLogin, articleExistance,
     ]),
    updateArticle)
 
-router.delete("/:id", isLogin, articleExistance, deleteArticle)
+router.delete("/:id", isLogin, articleExistance, access, deleteArticle)
+
 
 module.exports = router;

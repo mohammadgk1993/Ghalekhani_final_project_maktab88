@@ -27,12 +27,16 @@ const commentExistance = async (req,res,next) => {
     }
 }
 
-const userValidator = async (req,res,next) => {
+const access = async (req,res,next) => {
     try {
+        const comment = await Comment.findById(req.params.id)
+        const author = comment.author._id.toString()
         const user = await User.findById(req.session.user)
-        if (req.session.user != req.body.author && user.role == 'admin') {
+        const userId = user._id.toString()
+
+        if (userId === author) {
             return next()
-        } else if (req.session.user == req.body.author) {
+        } else if (userId !== author && user.role === 'admin') {
             return next()
         } else {
             return next(createError(403, 'Access Denied'))
@@ -45,5 +49,5 @@ const userValidator = async (req,res,next) => {
 module.exports = {
     createCommentValidator,
     commentExistance,
-    userValidator
+    access
 }

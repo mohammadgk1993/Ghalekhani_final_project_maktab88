@@ -1,10 +1,13 @@
 const createHttpError = require("http-errors")
 const Article = require("../models/Article")
 const User = require("../models/User")
+const fs = require('node:fs/promises')
+const path = require('node:path')
 
-const articleExistance = (req,res,next) => {
+
+const articleExistance = async (req,res,next) => {
     try {
-        const article = Article.findById(req.params.id)
+        const article = await Article.findById(req.params.id)
         if (!!article) return next()
         else return next(createHttpError(404, "Not Found"))
     } catch (error) {
@@ -12,24 +15,42 @@ const articleExistance = (req,res,next) => {
     }
 }
 
-const checkUserExistance = (req,res,next) => {
+// const articleUpdateValidator = async (req,res,next) => {
+//     try {
+//         if (!!req.body.title && req.body.title < 3) {
+//             return next(createError(403, 'title must be at least 3 characters'))
+//         }
+    
+//         if (!!req.body.content && req.body.content < 3) {
+//             return next(createError(403, 'content must be at least 3 characters'))
+//         }
+//     } catch (error) {
+//         return next(createError(500, error.message))
+//     }
+// }
+
+const access = async (req,res,next) => {
     try {
-        const user = User.findOne({username: req.body.author})
-        if (!!user) return next()
-        else return next(createHttpError(400, "Bad Request"))
+        const article = await Article.findById(req.params.id)
+        const author = article.author._id.toString()
+        const user = await User.findById(req.session.user)
+        const userId = user._id.toString()
+
+
+        if (userId === author) {
+            return next()
+        } else if (userId !== author && user.role === 'admin') {
+            return next()
+        } else {
+            return next(createError(403, 'Access Denied'))
+        }
     } catch (error) {
-        return next(createHttpError(500, "Server Error"))
+        return next(createError(500, error.message))
     }
 }
 
-const checkArticleOwner = (req,res,next) => {
-    try {
-        const article = Article.findById(req.params.id).populate("author")
-        if (article.author == req.session.user.username) return next()
-        else return next(createHttpError(403, "Permsion Denied"))
-    } catch (error) {
-        return next(createHttpError(500, "Server Error"))
-    }
-}
 
-module.exports = { articleExistance, checkUserExistance , checkArticleOwner}
+module.exports = { 
+    articleExistance,
+    access
+}

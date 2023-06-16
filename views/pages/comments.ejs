@@ -20,9 +20,7 @@
                     <input value="<%= comment.content %>" readonly="true">
                     <p><small><%= comment.createdAt %></small></p>
                     <div id="comment-crud">
-                        <% if (role == 'admin') { %>
-                            <button class="delete-btn trash" id="<%= comment._id %>" title="Delete Comment"><i class="fa fa-trash-o"></i></button>
-                        <% } else if (comment.author._id == id) { %>
+                        <% if (comment.author._id == id) { %>
                             <button class="btn trash" id="<%= comment._id %>" title="Delete Comment"><i class="fa fa-trash-o"></i></button>
                             <div id="edit-choice">
                                 <button title="edit comment" class="btn edit" id="<%= comment._id %>"><i class="fa fa-pencil"></i></button>
@@ -30,6 +28,8 @@
                                 <button title="cancel comment" class="cancel"><i class="fa fa-remove"></i></button>
                             </div>
                             <p id="error"></p>
+                        <% } else if (role == 'admin') { %>
+                            <button class="delete-btn trash" id="<%= comment._id %>" title="Delete Comment"><i class="fa fa-trash-o"></i></button>
                         <% } %>
                     </div>
                 </div>

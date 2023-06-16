@@ -17,7 +17,7 @@
                 </div>
                 <div class="card__body">
                     <h4><%= article.title %></h4>
-                    <p><%= article.description %></p>
+                    <p><%= article.content.slice(0,100) %></p>
                     <form action="/article/<%= article._id %>" method="get">
                         <input id="read-more" type="submit" value="read more">
                     </form>
@@ -35,7 +35,7 @@
             <% } %>
         </div>
         
-        <div>
+        <div class="pagination-btns">
             <% for (let i = 0 ; i < total ; i++) { %>
                 <button class="pagination"><%= i + 1 %></button>
               <% } %>

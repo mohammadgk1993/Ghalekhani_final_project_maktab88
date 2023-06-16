@@ -8,6 +8,7 @@
         <title>Register</title>
     </head>
     <body>
+        <p style="color:red"><%= errorMessage %></p>
         <div class="container" id="container">
             <div class="form-container sign-up-container">
                 <form action="/user/register" method="post">
@@ -17,13 +18,12 @@
                     <input type="text" placeholder="Last Name" name="lastName"/>
                     <input type="text" placeholder="Username" name="username"/>
                     <input type="password" placeholder="Password" name="password"/>
-                    <input type="tel" placeholder="Phone Number" name="phoneNumber">
+                    <input type="tel" placeholder="phone number: +98 9-- --- -- --" name="phoneNumber">
                     <button type="submit">Sign Up</button>
                 </form>
             </div>
             <div class="form-container sign-in-container">
                 <form action="/user/login" method="post">
-                    <p style="color:red"><%= errorMessage %></p>
                     <h1>Sign in</h1>
                     <span>or use your account</span>
                     <input type="text" placeholder="Username" name="username"/>

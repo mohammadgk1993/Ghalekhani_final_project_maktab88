@@ -13,6 +13,8 @@
 
 body {
     background-color: rgb(43, 149, 255);
+    width: 100%;
+    height: 100vh;
 }
 
 #comment {

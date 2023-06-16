@@ -5,10 +5,42 @@ $(() => {
         const updatedUser = {
         }
 
-        if (!!$("#update-user-firstName").val()) updatedUser.firstName = $("#update-user-firstName").val()
-        if (!!$("#update-user-lastName").val()) updatedUser.lastName = $("#update-user-lastName").val()
-        if (!!$("#update-user-password").val()) updatedUser.password = $("#update-user-password").val()
-        if (!!$("#update-user-phoneNumber").val()) updatedUser.phoneNumber = $("#update-user-phoneNumber").val()
+        if (!!$("#update-user-firstName").val()) {
+            if (!/^[a-zA-Z ,']+$/i.test($("#update-user-firstName").val())) {
+                alert('invalid value for firstname')
+                return
+            }
+
+            updatedUser.firstName = $("#update-user-firstName").val()
+        }
+
+        if (!!$("#update-user-lastName").val()) {
+            if (!/^[a-zA-Z ,']+$/i.test($("#update-user-lastName").val())) {
+                alert('invalid value for lastName')
+                return
+            } 
+
+            updatedUser.lastName = $("#update-user-lastName").val()
+        }
+
+        if (!!$("#update-user-password").val()) {
+            if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test($("#update-user-password").val())) {
+                alert('invalid value for password, password must have at least 1 character and 1 number')
+                return
+            }
+
+            updatedUser.password = $("#update-user-password").val()
+        }
+
+        if (!!$("#update-user-phoneNumber").val()) {
+            if (!/^(\+98)9\d{9}$/.test($("#update-user-phoneNumber").val())) {
+                alert('invalid value for phone Number!!! correct phone number format: +98 9-- --- -- --')
+                return
+            }
+
+            updatedUser.phoneNumber = $("#update-user-phoneNumber").val()
+        }
+
         if (!!$("#update-user-gender").val()) updatedUser.gender = $("#update-user-gender").val()
         
         fetch(`/user/`,
@@ -101,43 +133,6 @@ $(() => {
         $(this).css("color","white")
         $("#my-articles-btn").css("background-color","#dedede")
         $("#my-articles-btn").css("color","#2F80ED")
-    })
-
-    $("#update-article").on("click", function() {
-        const updatedArticle = {}
-        
-        if (!!$("#update-article-thumbnail").val()) updatedArticle.thumbnail = $("#update-article-thumbnail").val()
-        if (!!$("#update-article-title").val()) updatedArticle.title = $("#update-article-title").val()
-        if (!!$("#update-article-description").val()) updatedArticle.description = $("#update-article-description").val()
-        if (!!$("#update-article-content-image").val()) updatedArticle.contentImages = $("#update-article-content-image").val()
-        if (!!$("#update-article-content").val()) updatedArticle.content = $("#update-article-content").val()
-
-        fetch(`/article/${$(".container").children().eq(0).attr("id")}`,
-        {method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedArticle)
-        })
-        .then(res => res.json)
-        .then(data => {
-            console.log(data)
-            document.location = `/article/${$(".container").children().eq(0).attr("id")}`
-        })
-    })
-
-    $("#show-delete-article").on("click", function() {
-        console.log($(".container").children().eq(0).attr("id"))
-        fetch(`/article/${$(".container").children().eq(0).attr("id")}`,
-        {method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        })
-        .then(res => {
-            res.json()
-            document.location.pathname = "/article/all"
-        })
     })
 
     $("#admin-panel").on("click", function() {

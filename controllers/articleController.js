@@ -1,11 +1,9 @@
 const createError = require('http-errors');
-const url = require('url');
 const path = require('path');
 const fs = require('fs/promises');
 const Article = require("../models/Article");
 const User = require('../models/User');
 const Comment = require('../models/comment');
-const { thumbnailAvatarUpload } = require('../utils/multer-settings');
 
 
 const createArticlePage = async (req,res,next) => {
@@ -56,7 +54,7 @@ const createArticle = async (req,res,next) => {
 
         newArticle.title = req.body.title
         newArticle.thumbnail = req.files.thumbnail[0].path.slice(6)
-        newArticle.description = req.body.content.slice(0,150)
+        newArticle.description = req.body.content.slice(0,40)
         newArticle.content = req.body.content
         newArticle.contentImages = 
         req.files.contentImages.map(val => val.path.slice(6))
@@ -84,24 +82,28 @@ const readArticle = async (req,res,next) => {
 
 const updateArticle = async (req,res,next) => {
     try {
-        console.log(req.files.contentImages)
         const updatedArticle = {}
         let article = await Article.findById(req.params.id)
 
         if (!!req.body.title) updatedArticle.title = req.body.title
-        if (!!req.body.content) updatedArticle.content = req.body.title
-        if (!!req.files.thumbnail[0]) {
+        if (!!req.body.content) updatedArticle.content = req.body.content
+        if (!!req.body.contentImages) {
+            for (let image of article.contentImages) {
+                if (!req.body.contentImages.includes(image)) {
+                    await fs.unlink(path.join(__dirname, "../public", image))
+                }
+            }
+            updatedArticle.contentImages = JSON.parse(req.body.contentImages)
+        }
+
+        if (!!req.files.thumbnail && req.files.thumbnail.length > 0) {
             await fs.unlink(path.join(__dirname, "../public", article.thumbnail))
-            updatedArticle.thumbnail = "/images/articleAvatars/" + req.files.thumbnail[0].filename
+            updatedArticle.thumbnail ="/images/articleAvatars/" + req.files.thumbnail[0].filename
         }
 
         if(!!req.files.contentImages && req.files.contentImages.length > 0) {
-            console.log(req.files.contentImages)
-            for (let image of article.contentImages) {
-                await fs.unlink(path.join(__dirname, "../public", image))
-            }
-
-            updatedArticle.contentImages = req.files.contentImages.map(val => val.path.slice(6))
+            const newContentImages = await req.files.contentImages.map(val => val.path.slice(6))
+            updatedArticle.contentImages = [...article.contentImages,...newContentImages]
         }
 
         article = await Article.findByIdAndUpdate(req.params.id, updatedArticle)
@@ -133,7 +135,6 @@ const deleteArticle = async (req,res,next) => {
 
 module.exports = {
     getAllArticles,
-    // getUserArticles,
     createArticle,
     readArticle,
     updateArticle,
